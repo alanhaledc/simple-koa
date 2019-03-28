@@ -24,7 +24,7 @@ class Application {
 
   /**
    * 挂载中间件
-   * @param {Array<Function} middleware
+   * @param {Array<Function>} middleware
    */
   use(middleware) {
     this.middlewares.push(middleware)
