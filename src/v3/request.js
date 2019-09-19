@@ -1,6 +1,4 @@
-/**
- * 封装 Node 原生 request
- */
+// 封装 Node 原生 request
 
 const url = require('url')
 

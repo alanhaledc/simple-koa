@@ -1,6 +1,6 @@
-const SimpleKoa = require('./application')
+const App = require('./application')
 
-const app = new SimpleKoa()
+const app = new App()
 
 app.use(async (ctx, next) => {
   console.log(ctx.path)

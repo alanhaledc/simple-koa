@@ -1,13 +1,10 @@
-/**
- * 测试简单服务
- */
-const SimpleKoa = require('./application')
+const App = require('./application')
 
-const app = new SimpleKoa()
+const app = new App()
 
 app.use((req, res) => {
   res.writeHead(200)
-  res.write('Hello World!')
+  res.write('Hello World')
   res.end()
 })
 

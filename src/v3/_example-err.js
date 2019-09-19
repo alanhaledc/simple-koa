@@ -1,9 +1,8 @@
-/**
- * 错误测试
- */
-const SimpleKoa = require('./application')
+// test err
 
-const app = new SimpleKoa()
+const App = require('./application')
+
+const app = new App()
 
 const responseData = {}
 

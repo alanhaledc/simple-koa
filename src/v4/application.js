@@ -1,8 +1,5 @@
-/**
- * @version v4.0
- * 引入事件模块
- * 可以监听错误事件，处理错误事件
- */
+// @version v4.0
+// 引入事件模块 - 处理异常事件
 
 const Emitter = require('events') // 引入事件模块
 const http = require('http')
@@ -35,10 +32,10 @@ class Application extends Emitter {
         return async () => await middleware(ctx, oldNext)
       }
 
-      const len = this.middlewares.length
+      let len = this.middlewares.length
       let next = async () => Promise.resolve()
-      for (let i = len - 1; i >= 0; i--) {
-        const currentMiddleware = this.middlewares[i]
+      while (len--) {
+        const currentMiddleware = this.middlewares[len]
         next = createNext(currentMiddleware, next)
       }
       await next()
@@ -49,7 +46,7 @@ class Application extends Emitter {
     return (req, res) => {
       const ctx = this.createContext(req, res)
       const respond = () => this.responseBody(ctx)
-      const onerror = err => this.onerror(err, ctx) // 增加异常处理
+      const onerror = error => this.onerror(error, ctx) // 增加异常处理
       const fn = this.compose()
       return fn(ctx)
         .then(respond)
@@ -75,19 +72,16 @@ class Application extends Emitter {
     }
   }
 
-  /**
-   * 异常处理方法
-   * @memberof Application
-   */
-  onerror(err, ctx) {
-    if (err.code === 'ENOENT') {
+  // 异常处理
+  onerror(error, ctx) {
+    if (error.code === 'ENOENT') {
       ctx.status = 404
     } else {
       ctx.status = 500
     }
-    const msg = err.message || 'Internal Error'
+    const msg = error.message || 'Internal Error'
     ctx.res.end(msg)
-    this.emit('error', err)
+    this.emit('error', error)
   }
 }
 

@@ -1,6 +1,4 @@
-/**
- * Koa 中间件机制推理
- */
+// 中间件机制推理
 
 async function m1(next) {
   console.log('m1')

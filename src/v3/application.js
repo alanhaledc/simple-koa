@@ -1,8 +1,6 @@
-/**
- * @version v3.0
- * 引入中间机制
- * 洋葱模型
- */
+// @version v3.0
+// 引入中间机制 - 洋葱模型
+
 const http = require('http')
 const context = require('./context')
 const request = require('./request')
@@ -10,8 +8,8 @@ const response = require('./response')
 
 class Application {
   constructor() {
-    // this.callbackFn = null // 删除单个 cb，由中间件机制替换
-    this.middlewares = [] // 增加中间件队列
+    // this.callbackFn = null // 删除单个 cb，由中间件机制替代
+    this.middlewares = [] // 中间件队列
     this.context = context
     this.request = request
     this.response = response
@@ -22,39 +20,27 @@ class Application {
     server.listen(...args)
   }
 
-  /**
-   * 挂载中间件
-   * @param {Array<Function>} middleware
-   */
   use(middleware) {
     this.middlewares.push(middleware)
   }
 
-  /**
-   * 中间件的合并方法
-   * 按顺序合并，并一一调用
-   * @returns
-   */
+  // 中间件的合并方法
   compose() {
     return async ctx => {
       function createNext(middleware, oldNext) {
         return async () => await middleware(ctx, oldNext)
       }
 
-      const len = this.middlewares.length
+      let len = this.middlewares.length
       let next = async () => Promise.resolve()
-      for (let i = len - 1; i >= 0; i--) {
-        const currentMiddleware = this.middlewares[i]
+      while (len--) {
+        const currentMiddleware = this.middlewares[len]
         next = createNext(currentMiddleware, next)
       }
       await next()
     }
   }
 
-  /**
-   * server 所需的 callback 函数
-   * @returns
-   */
   callback() {
     return (req, res) => {
       const ctx = this.createContext(req, res)

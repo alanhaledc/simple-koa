@@ -18,10 +18,10 @@ const requestSet = []
 const responseGet = ['body', 'status']
 const responseSet = responseGet
 
-requestGet.forEach(ele => delegateGet('request', ele))
-requestSet.forEach(ele => delegateSet('request', ele))
+requestGet.forEach(element => delegateGet('request', element))
+requestSet.forEach(element => delegateSet('request', element))
 
-responseGet.forEach(ele => delegateGet('response', ele))
-responseSet.forEach(ele => delegateSet('response', ele))
+responseGet.forEach(element => delegateGet('response', element))
+responseSet.forEach(element => delegateSet('response', element))
 
 module.exports = proto
