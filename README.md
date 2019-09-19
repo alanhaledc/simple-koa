@@ -4,9 +4,6 @@
 
 application：封装原生 http 模块并,且暴露 API。
 
-- use
-- listen
-
 ### v2 版本
 
 - request：封装 Node 原生 request。
@@ -20,8 +17,12 @@ application：引入中间机制，洋葱模式。
 
 ### v4 版本
 
-application：引入事件模块，可以监听错误事件，处理错误事件。
+application：引入事件模块，处理异常事件。
 
 ### v5 版本
 
 application：使用 koa2 的 compose。
+
+### v6 版本
+
+context：使用 Object.defineProperty 代理属性
