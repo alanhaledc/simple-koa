@@ -14,7 +14,7 @@ function delegateSet(property, name) {
   })
 }
 
-const requestGet = ['query']
+const requestGet = ['query', 'path']
 const requestSet = []
 
 const responseGet = ['body', 'status']

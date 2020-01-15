@@ -32,13 +32,12 @@ class Application {
     }
   }
 
-  // 创建上下文
   createContext(req, res) {
     const ctx = Object.create(this.context)
-    ctx.request = Object.create(this.request) 
+    ctx.request = Object.create(this.request)
     ctx.response = Object.create(this.response)
-    ctx.req = ctx.request.req = req
-    ctx.res = ctx.response.res = res
+    ctx.req = ctx.request.req = req // 原生 request
+    ctx.res = ctx.response.res = res // 原生 response
     return ctx
   }
 

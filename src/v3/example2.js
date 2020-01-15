@@ -1,9 +1,9 @@
-const App = require('./application')
+const App = require('./src/application')
 
 const app = new App()
 
 app.use(async (ctx, next) => {
-  console.log(ctx.path)
+  console.log('path', ctx.path)
   console.log(1)
   await next()
   console.log(6)

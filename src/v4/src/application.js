@@ -1,7 +1,7 @@
 // @version v4.0
-// 引入事件模块 - 处理异常事件
+// 引入事件机制 -> 处理异常事件
 
-const Emitter = require('events') // 引入事件模块
+const Emitter = require('events') // 事件模块
 const http = require('http')
 const context = require('./context')
 const request = require('./request')
@@ -46,11 +46,11 @@ class Application extends Emitter {
     return (req, res) => {
       const ctx = this.createContext(req, res)
       const respond = () => this.responseBody(ctx)
-      const onerror = error => this.onerror(error, ctx) // 增加异常处理
+      const onerror = error => this.onerror(error, ctx)
       const fn = this.compose()
       return fn(ctx)
         .then(respond)
-        .catch(onerror) // 增加异常处理
+        .catch(onerror) // 捕获异常
     }
   }
 
@@ -72,7 +72,7 @@ class Application extends Emitter {
     }
   }
 
-  // 异常处理
+  // 异常处理方法
   onerror(error, ctx) {
     if (error.code === 'ENOENT') {
       ctx.status = 404

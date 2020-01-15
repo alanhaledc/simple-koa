@@ -14,7 +14,7 @@ class Application {
     server.listen(...args)
   }
 
-  // 挂载回调函数
+  // 使用单个回调函数
   use(fn) {
     this.callbackFn = fn
   }

@@ -1,6 +1,6 @@
 // 测试中间件机制
 
-const App = require('./application')
+const App = require('./src/application')
 
 const app = new App()
 

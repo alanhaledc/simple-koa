@@ -1,16 +1,15 @@
-// @version v6.0
-// 改进 context 代理的方式
+// @version v3.0
+// 引入中间机制 - 洋葱模型
 
-const Emitter = require('events')
 const http = require('http')
 const context = require('./context')
 const request = require('./request')
 const response = require('./response')
 
-class Application extends Emitter {
+class Application {
   constructor() {
-    super()
-    this.middlewares = []
+    // this.callbackFn = null // 删除单个 cb，由中间件机制替代
+    this.middlewares = [] // 中间件队列
     this.context = context
     this.request = request
     this.response = response
@@ -25,20 +24,20 @@ class Application extends Emitter {
     this.middlewares.push(middleware)
   }
 
-  // 使用 koa2 的 compose
-  compose(middlewares) {
-    return function(context, next) {
-      return dispatch(0)
-      function dispatch(i) {
-        let fn = middlewares[i]
-        if (i === middlewares.length) fn = next
-        if (!fn) return Promise.resolve()
-        try {
-          return Promise.resolve(fn(context, dispatch.bind(null, i + 1)))
-        } catch (error) {
-          return Promise.reject(error)
-        }
+  // 整合中间件
+  compose() {
+    return async ctx => {
+      function createNext(middleware, oldNext) {
+        return async () => await middleware(ctx, oldNext)
       }
+
+      let len = this.middlewares.length
+      let next = async () => await Promise.resolve()
+      while (len--) {
+        const currentMiddleware = this.middlewares[len]
+        next = createNext(currentMiddleware, next)
+      }
+      await next()
     }
   }
 
@@ -46,11 +45,9 @@ class Application extends Emitter {
     return (req, res) => {
       const ctx = this.createContext(req, res)
       const respond = () => this.responseBody(ctx)
-      const onerror = err => this.onerror(err, ctx)
-      const fn = this.compose(this.middlewares)
-      return fn(ctx)
-        .then(respond)
-        .catch(onerror)
+      // this.callbackFn(ctx).then(respond)
+      const fn = this.compose()
+      return fn(ctx).then(respond)
     }
   }
 
@@ -70,17 +67,6 @@ class Application extends Emitter {
     } else if (typeof content === 'object') {
       ctx.res.end(JSON.stringify(content))
     }
-  }
-
-  onerror(err, ctx) {
-    if (err.code === 'ENOENT') {
-      ctx.status = 404
-    } else {
-      ctx.status = 500
-    }
-    const msg = err.message || 'Internal Error'
-    ctx.res.end(msg)
-    this.emit('error', err)
   }
 }
 

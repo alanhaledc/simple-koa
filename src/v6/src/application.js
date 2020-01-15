@@ -1,5 +1,5 @@
-// @version v5.0
-// 使用 koa2 的 compose
+// @version v6.0
+// 改进 context 的代理方式
 
 const Emitter = require('events')
 const http = require('http')
@@ -25,7 +25,6 @@ class Application extends Emitter {
     this.middlewares.push(middleware)
   }
 
-  // 使用 koa2 的 compose
   compose(middlewares) {
     return function(context, next) {
       return dispatch(0)

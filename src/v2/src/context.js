@@ -2,14 +2,14 @@
 
 const proto = {}
 
-// 代理 getter 属性
+// 定义 getter 属性
 function delegateGet(property, name) {
   proto.__defineGetter__(name, function() {
     return this[property][name]
   })
 }
 
-// 代理 setter 属性
+// 定义 setter 属性
 function delegateSet(property, name) {
   proto.__defineSetter__(name, function(val) {
     this[property][name] = val
@@ -31,7 +31,7 @@ responseSet.forEach(element => delegateSet('response', element))
 
 module.exports = proto
 
-// 代理方法 1 不适合代理更多的方法
+// 原代理方法 不适合代理更多的方法
 // module.exports = {
 //   get query() {
 //     return this.request.query

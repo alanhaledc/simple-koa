@@ -1,6 +1,6 @@
-// test err
+// 测试异常机制
 
-const App = require('./application')
+const App = require('./src/application')
 
 const app = new App()
 
@@ -19,10 +19,21 @@ app.use(async (ctx, next) => {
 
 app.use(async ctx => {
   responseData.sex = 'male'
-  throw new Error('oooops') // 抛出异常
+  await next() // 抛出错误 ‘next is not defined’
+})
+
+// app.on('error', err => console.log(err.stack)) // 捕获错误
+
+// 使用 try catch 捕获错误
+app.use(async (ctx, next) => {
+  try {
+    await next()
+  } catch (error) {
+    console.log(error)
+  }
 })
 
 app.listen(3000, () => console.log('Server running on http://127.0.0.1:3000'))
 
 // 在浏览器中访问 http://127.0.0.1:3000/
-// 有异常，没有返回
+// 返回状态码 500 和 ‘next is not defined’

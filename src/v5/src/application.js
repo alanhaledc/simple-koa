@@ -1,15 +1,16 @@
-// @version v3.0
-// 引入中间机制 - 洋葱模型
+// @version v5.0
+// 使用 koa2 的 compose
 
+const Emitter = require('events')
 const http = require('http')
 const context = require('./context')
 const request = require('./request')
 const response = require('./response')
 
-class Application {
+class Application extends Emitter {
   constructor() {
-    // this.callbackFn = null // 删除单个 cb，由中间件机制替代
-    this.middlewares = [] // 中间件队列
+    super()
+    this.middlewares = []
     this.context = context
     this.request = request
     this.response = response
@@ -24,20 +25,20 @@ class Application {
     this.middlewares.push(middleware)
   }
 
-  // 中间件的合并方法
-  compose() {
-    return async ctx => {
-      function createNext(middleware, oldNext) {
-        return async () => await middleware(ctx, oldNext)
+  // 使用 koa2 的 compose 函数（简化）
+  compose(middlewares) {
+    return function(context, next) {
+      return dispatch(0)
+      function dispatch(i) {
+        let fn = middlewares[i]
+        if (i === middlewares.length) fn = next
+        if (!fn) return Promise.resolve()
+        try {
+          return Promise.resolve(fn(context, dispatch.bind(null, i + 1))) // 递归
+        } catch (error) {
+          return Promise.reject(error)
+        }
       }
-
-      let len = this.middlewares.length
-      let next = async () => Promise.resolve()
-      while (len--) {
-        const currentMiddleware = this.middlewares[len]
-        next = createNext(currentMiddleware, next)
-      }
-      await next()
     }
   }
 
@@ -45,9 +46,11 @@ class Application {
     return (req, res) => {
       const ctx = this.createContext(req, res)
       const respond = () => this.responseBody(ctx)
-      // this.callbackFn(ctx).then(respond)
-      const fn = this.compose() // 中间件处理函数
-      return fn(ctx).then(respond)
+      const onerror = err => this.onerror(err, ctx)
+      const fn = this.compose(this.middlewares)
+      return fn(ctx)
+        .then(respond)
+        .catch(onerror)
     }
   }
 
@@ -67,6 +70,17 @@ class Application {
     } else if (typeof content === 'object') {
       ctx.res.end(JSON.stringify(content))
     }
+  }
+
+  onerror(err, ctx) {
+    if (err.code === 'ENOENT') {
+      ctx.status = 404
+    } else {
+      ctx.status = 500
+    }
+    const msg = err.message || 'Internal Error'
+    ctx.res.end(msg)
+    this.emit('error', err)
   }
 }
 

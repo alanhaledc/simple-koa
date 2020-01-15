@@ -1,6 +1,6 @@
 // test 扩展
 
-const App = require('./application')
+const App = require('./src/application')
 
 const app = new App()
 

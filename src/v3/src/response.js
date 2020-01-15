@@ -5,7 +5,6 @@ module.exports = {
     return this._body
   },
 
-  // 设置返回的内容
   set body(data) {
     this._body = data
   },
@@ -14,7 +13,6 @@ module.exports = {
     return this.res.statusCode
   },
 
-  // 设置返回的状态码
   set status(statusCode) {
     if (typeof statusCode !== 'number') {
       throw new Error('statusCode must be a number!')
