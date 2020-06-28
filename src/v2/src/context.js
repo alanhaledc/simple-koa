@@ -1,35 +1,35 @@
 // 代理 request 和 response 模块的属性
 
-const proto = {}
+const proto = {};
 
 // 定义 getter 属性
 function delegateGet(property, name) {
-  proto.__defineGetter__(name, function() {
-    return this[property][name]
-  })
+  proto.__defineGetter__(name, function () {
+    return this[property][name];
+  });
 }
 
 // 定义 setter 属性
 function delegateSet(property, name) {
-  proto.__defineSetter__(name, function(val) {
-    this[property][name] = val
-  })
+  proto.__defineSetter__(name, function (val) {
+    this[property][name] = val;
+  });
 }
 
 // 需要代理的属性名称
-const requestGet = ['query']
-const requestSet = []
+const requestGet = ["query"];
+const requestSet = [];
 
-const responseGet = ['body', 'status']
-const responseSet = responseGet
+const responseGet = ["body", "status"];
+const responseSet = responseGet;
 
-requestGet.forEach(element => delegateGet('request', element))
-requestSet.forEach(element => delegateSet('request', element))
+requestGet.forEach((element) => delegateGet("request", element));
+requestSet.forEach((element) => delegateSet("request", element));
 
-responseGet.forEach(element => delegateGet('response', element))
-responseSet.forEach(element => delegateSet('response', element))
+responseGet.forEach((element) => delegateGet("response", element));
+responseSet.forEach((element) => delegateSet("response", element));
 
-module.exports = proto
+module.exports = proto;
 
 // 原代理方法 不适合代理更多的方法
 // module.exports = {

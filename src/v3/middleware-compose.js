@@ -1,17 +1,17 @@
 // 中间件机制推理
 
 async function m1(next) {
-  console.log('m1')
-  await next()
+  console.log("m1");
+  await next();
 }
 
 async function m2(next) {
-  console.log('m2')
-  await next()
+  console.log("m2");
+  await next();
 }
 
 async function m3() {
-  console.log('m3')
+  console.log("m3");
 }
 
 // 模拟中间件调用机制
@@ -40,23 +40,23 @@ async function m3() {
 
 // 精简 合并
 function createNext(middleware, oldNext) {
-  return async function() {
-    await middleware(oldNext)
-  }
+  return async function () {
+    await middleware(oldNext);
+  };
 }
 
-const middlewares = [m1, m2, m3]
-const len = middlewares.length
+const middlewares = [m1, m2, m3];
+const len = middlewares.length;
 
 // let next = async function() {
 //   return Promise.resolve()
 // }
 
-let next = null
+let next = null;
 
 for (let i = len - 1; i >= 0; i--) {
-  const currentMiddleware = middlewares[i]
-  next = createNext(currentMiddleware, next)
+  const currentMiddleware = middlewares[i];
+  next = createNext(currentMiddleware, next);
 }
 
-next() // 输出 m1 m2 m3
+next(); // 输出 m1 m2 m3

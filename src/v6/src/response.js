@@ -1,21 +1,20 @@
 module.exports = {
   get body() {
-    return this._body
+    return this._body;
   },
 
   set body(data) {
-    this._body = data
+    this._body = data;
   },
 
   get status() {
-    return this.res.statusCode
+    return this.res.statusCode;
   },
 
   set status(statusCode) {
-    if (typeof statusCode !== 'number') {
-      throw new Error('StatusCode must be a number!')
+    if (typeof statusCode !== "number") {
+      throw new Error("StatusCode must be a number!");
     }
-    this.res.statusCode = statusCode
-  }
-}
- 
+    this.res.statusCode = statusCode;
+  },
+};
